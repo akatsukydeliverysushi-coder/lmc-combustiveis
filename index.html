@@ -13,6 +13,7 @@
 <main class="container">
 <section class="welcome" id="welcome"><h2>Painel de Controle</h2><p>Cadastre o posto, produtos, tanques, bombas e bicos para começar a registrar a movimentação.</p></section>
 <section class="cards" id="cards">
+<button class="card" onclick="openModule('Postos')"><strong>🏢</strong><span>Postos</span><small>Cadastrar postos e gerar links</small></button>
 <button class="card" onclick="openModule('Produtos')"><strong>⛽</strong><span>Produtos</span><small>Combustíveis cadastrados</small></button>
 <button class="card" onclick="openModule('Tanques')"><strong>🛢️</strong><span>Tanques</span><small>Controle dos tanques</small></button>
 <button class="card" onclick="openModule('Bombas e Bicos')"><strong>🔢</strong><span>Bombas e Bicos</span><small>Equipamentos e bicos</small></button>
@@ -26,15 +27,29 @@
 </section>
 <section id="module" class="module hidden"></section>
 </main>
-<footer>LMC Combustíveis • Versão 1.6</footer>
+<footer>LMC Combustíveis • Versão 1.7</footer>
 <script src="app.js"></script>
 <script src="relatorios.js"></script>
 <script src="backup.js"></script>
 <script src="usuarios.js"></script>
+<script src="postos.js"></script>
 <script src="login.js"></script>
 <script>
 const _openModuleLmc=openModule;
-window.openModule=function(name){if(name==='Backup e Restauração'){cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderBackup();return;}if(name==='Usuários'){cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderUsuarios();return;}_openModuleLmc(name)};
+window.openModule=function(name){
+  cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');
+  if(name==='Postos'){renderPostos();return;}
+  if(name==='Backup e Restauração'){renderBackup();return;}
+  if(name==='Usuários'){renderUsuarios();return;}
+  if(modoPosto()&&name==='Configurações'){
+    const p=postoAtual();
+    if(p){state.posto={...state.posto,...p};}
+  }
+  _openModuleLmc(name)
+};
+if(modoPosto()){
+  cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderPainelPosto();
+}
 if(typeof isAuthenticated==='function'&&isAuthenticated()){
   const topbar=document.querySelector('.topbar');
   const atual=typeof usuarioAtual==='function'?usuarioAtual():null;
