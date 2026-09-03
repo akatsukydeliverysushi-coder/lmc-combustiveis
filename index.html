@@ -7,6 +7,11 @@
   <meta name="description" content="LMC - Livro de Movimentação de Combustíveis">
   <title>LMC - Livro de Movimentação de Combustíveis</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-cloud.js"></script>
 </head>
 <body>
 <header class="topbar"><div><h1>⛽ LMC</h1><p>Livro de Movimentação de Combustíveis</p></div><span class="status" id="systemStatus">Sistema inicial</span></header>
@@ -27,7 +32,7 @@
 </section>
 <section id="module" class="module hidden"></section>
 </main>
-<footer>LMC Combustíveis • Versão 1.7</footer>
+<footer>LMC Combustíveis • Versão 1.8 • Firebase</footer>
 <script src="app.js"></script>
 <script src="relatorios.js"></script>
 <script src="backup.js"></script>
@@ -35,24 +40,19 @@
 <script src="postos.js"></script>
 <script src="login.js"></script>
 <script>
+try{iniciarFirebase()}catch(e){console.error('Falha ao iniciar Firebase:',e)}
 const _openModuleLmc=openModule;
 window.openModule=function(name){
   cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');
   if(name==='Postos'){renderPostos();return;}
   if(name==='Backup e Restauração'){renderBackup();return;}
   if(name==='Usuários'){renderUsuarios();return;}
-  if(modoPosto()&&name==='Configurações'){
-    const p=postoAtual();
-    if(p){state.posto={...state.posto,...p};}
-  }
+  if(modoPosto()&&name==='Configurações'){const p=postoAtual();if(p){state.posto={...state.posto,...p};}}
   _openModuleLmc(name)
 };
-if(modoPosto()){
-  cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderPainelPosto();
-}
+if(modoPosto()){cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderPainelPosto();}
 if(typeof isAuthenticated==='function'&&isAuthenticated()){
-  const topbar=document.querySelector('.topbar');
-  const atual=typeof usuarioAtual==='function'?usuarioAtual():null;
+  const topbar=document.querySelector('.topbar');const atual=typeof usuarioAtual==='function'?usuarioAtual():null;
   if(topbar&&!document.getElementById('logoutLmc')){const b=document.createElement('button');b.id='logoutLmc';b.textContent='Sair';b.onclick=typeof logoutUsuario==='function'?logoutUsuario:logoutLmc;b.style.cssText='background:#b42318;color:#fff;border:0;border-radius:9px;padding:10px 16px;cursor:pointer';topbar.appendChild(b)}
   if(typeof updateStatus==='function'&&atual){const s=document.getElementById('systemStatus');if(s)s.textContent=`${atual.nome} • ${atual.perfil}`}
 }
