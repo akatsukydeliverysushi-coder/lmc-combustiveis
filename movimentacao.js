@@ -1,12 +1,16 @@
 /* LMC - Movimentacao diaria / saida de combustivel */
 (function(){
   function escM(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-  function litrosM(v){return Number.parseFloat(String(v).replace(',','.'))||0}
+  function litrosM(v){return Number.parseFloat(String(v??'').trim().replace(',','.'))||0}
   function fmtM(v){return litrosM(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
   function hojeM(){return new Date().toISOString().slice(0,10)}
   function brM(v){const p=String(v||'').split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:'—'}
   function ultimoBico(bicoId){
-    const lista=state.movimentacoes.filter(x=>String(x.bicoId)===String(bicoId)).slice().sort((a,b)=>String(b.data).localeCompare(String(a.data))||(Number(b.criadoEm||0)-Number(a.criadoEm||0)));
+    const lista=state.movimentacoes.filter(x=>String(x.bicoId)===String(bicoId)).slice().sort((a,b)=>{
+      const ca=Number(a.criadoEm||0), cb=Number(b.criadoEm||0);
+      if(cb!==ca)return cb-ca;
+      return String(b.data).localeCompare(String(a.data));
+    });
     return lista[0]||null;
   }
   window.syncMovBico=function(){
@@ -48,20 +52,20 @@
   };
   window.addMovimentacao=function(e){
     e.preventDefault();
-    const bico=state.bicos.find(x=>String(x.id)===String(movBico.value));
-    const tanque=state.tanques.find(x=>String(x.id)===String(movTanque.value));
-    const ini=litrosM(movLeituraInicial.value), fim=litrosM(movLeituraFinal.value), preco=litrosM(movPreco.value);
+    const bico=document.getElementById('movBico')&&state.bicos.find(x=>String(x.id)===String(document.getElementById('movBico').value));
+    const tanque=document.getElementById('movTanque')&&state.tanques.find(x=>String(x.id)===String(document.getElementById('movTanque').value));
+    const ini=litrosM(document.getElementById('movLeituraInicial')?.value), fim=litrosM(document.getElementById('movLeituraFinal')?.value), preco=litrosM(document.getElementById('movPreco')?.value);
     if(!bico||!tanque)return alert('Selecione um bico e um tanque.');
     if(String(bico.tanqueId)!==String(tanque.id))return alert('O bico selecionado não pertence a este tanque.');
-    if(fim<ini)return alert('A leitura final não pode ser menor que a leitura inicial.');
+    if(fim<ini)return alert(`A leitura final (${fmtM(fim)}) não pode ser menor que a leitura inicial (${fmtM(ini)}). Verifique os números digitados.`);
     const litrosVendidos=fim-ini;
-    if(litrosVendidos<=0)return alert('Informe uma leitura final maior que a inicial.');
+    if(litrosVendidos<=0)return alert('A leitura final deve ser maior que a inicial. Se o bico foi zerado/reiniciado, registre a ocorrência nas observações e faça o ajuste antes da movimentação.');
     if(preco<=0)return alert('Informe um preço por litro válido.');
     const estoque=litrosM(tanque.estoqueAtual);
     if(litrosVendidos>estoque)return alert(`Estoque insuficiente no ${tanque.numero?'Tanque '+tanque.numero:'tanque'}. Estoque atual: ${fmtM(estoque)} L.`);
     const ult=ultimoBico(bico.id);
-    if(ult&&ini<litrosM(ult.leituraFinal))return alert(`A leitura inicial não pode ser menor que a última leitura registrada (${fmtM(ult.leituraFinal)}).`);
-    const item={id:Date.now(),criadoEm:Date.now(),data:movData.value,bicoId:bico.id,bicoNumero:bico.numero,bicoNome:`${bico.bombaNome} • Bico ${bico.numero}`,produto:bico.produto,tanqueId:tanque.id,tanqueNome:`Tanque ${tanque.numero}`,leituraInicial:ini,leituraFinal:fim,litrosVendidos,precoLitro:preco,valorTotal:litrosVendidos*preco,responsavel:movResponsavel.value.trim(),observacoes:movObservacoes.value.trim()};
+    if(ult&&ini<litrosM(ult.leituraFinal))return alert(`A leitura inicial (${fmtM(ini)}) não pode ser menor que a última leitura registrada deste bico (${fmtM(ult.leituraFinal)}).`);
+    const item={id:Date.now(),criadoEm:Date.now(),data:document.getElementById('movData').value,bicoId:bico.id,bicoNumero:bico.numero,bicoNome:`${bico.bombaNome} • Bico ${bico.numero}`,produto:bico.produto,tanqueId:tanque.id,tanqueNome:`Tanque ${tanque.numero}`,leituraInicial:ini,leituraFinal:fim,litrosVendidos,precoLitro:preco,valorTotal:litrosVendidos*preco,responsavel:document.getElementById('movResponsavel').value.trim(),observacoes:document.getElementById('movObservacoes').value.trim()};
     state.movimentacoes.push(item);tanque.estoqueAtual=estoque-litrosVendidos;save();alert(`Movimentação registrada. ${fmtM(litrosVendidos)} L baixados do estoque.`);renderMovimentacao();
   };
   window.removeMovimentacao=function(i){
