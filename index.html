@@ -25,13 +25,18 @@
 </section>
 <section id="module" class="module hidden"></section>
 </main>
-<footer>LMC Combustíveis • Versão 1.4</footer>
+<footer>LMC Combustíveis • Versão 1.5</footer>
 <script src="app.js"></script>
 <script src="relatorios.js"></script>
 <script src="backup.js"></script>
+<script src="login.js"></script>
 <script>
 const _openModuleLmc=openModule;
 window.openModule=function(name){if(name==='Backup e Restauração'){cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderBackup();return;}_openModuleLmc(name)};
+if(typeof isAuthenticated==='function'&&isAuthenticated()){
+  const topbar=document.querySelector('.topbar');
+  if(topbar&&!document.getElementById('logoutLmc')){const b=document.createElement('button');b.id='logoutLmc';b.textContent='Sair';b.onclick=logoutLmc;b.style.cssText='background:#b42318;color:#fff;border:0;border-radius:9px;padding:10px 16px;cursor:pointer';topbar.appendChild(b)}
+}
 </script>
 </body>
 </html>
