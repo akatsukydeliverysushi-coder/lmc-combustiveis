@@ -21,11 +21,17 @@
 <button class="card" onclick="openModule('Livro LMC')"><strong>📘</strong><span>Livro LMC</span><small>Consulta e fechamento</small></button>
 <button class="card" onclick="openModule('Relatórios')"><strong>📊</strong><span>Relatórios</span><small>Resumo das movimentações</small></button>
 <button class="card" onclick="openModule('Configurações')"><strong>⚙️</strong><span>Configurações</span><small>Dados do estabelecimento</small></button>
+<button class="card" onclick="openModule('Backup e Restauração')"><strong>💾</strong><span>Backup e Restauração</span><small>Salvar e recuperar os dados</small></button>
 </section>
 <section id="module" class="module hidden"></section>
 </main>
-<footer>LMC Combustíveis • Versão 1.3</footer>
+<footer>LMC Combustíveis • Versão 1.4</footer>
 <script src="app.js"></script>
 <script src="relatorios.js"></script>
+<script src="backup.js"></script>
+<script>
+const _openModuleLmc=openModule;
+window.openModule=function(name){if(name==='Backup e Restauração'){cards.classList.add('hidden');welcome.classList.add('hidden');module.classList.remove('hidden');renderBackup();return;}_openModuleLmc(name)};
+</script>
 </body>
 </html>
