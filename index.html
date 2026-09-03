@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="LMC - Livro de Movimentação de Combustíveis">
+  <title>LMC - Livro de Movimentação de Combustíveis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>⛽ LMC</h1>
+      <p>Livro de Movimentação de Combustíveis</p>
+    </div>
+    <span class="status">Sistema inicial</span>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <h2>Painel de Controle</h2>
+      <p>Cadastre os dados do posto e acompanhe a movimentação dos combustíveis.</p>
+    </section>
+
+    <section class="cards">
+      <button class="card" onclick="openModule('Produtos')"><strong>⛽</strong><span>Produtos</span><small>Combustíveis cadastrados</small></button>
+      <button class="card" onclick="openModule('Tanques')"><strong>🛢️</strong><span>Tanques</span><small>Controle dos tanques</small></button>
+      <button class="card" onclick="openModule('Bombas e Bicos')"><strong>🔢</strong><span>Bombas e Bicos</span><small>Equipamentos e bicos</small></button>
+      <button class="card" onclick="openModule('Entradas')"><strong>📥</strong><span>Entradas</span><small>Recebimento de combustível</small></button>
+      <button class="card" onclick="openModule('Movimentação Diária')"><strong>📋</strong><span>Movimentação Diária</span><small>Registros do dia</small></button>
+      <button class="card" onclick="openModule('Livro LMC')"><strong>📘</strong><span>Livro LMC</span><small>Consulta e fechamento</small></button>
+      <button class="card" onclick="openModule('Relatórios')"><strong>📊</strong><span>Relatórios</span><small>Resumo das movimentações</small></button>
+      <button class="card" onclick="openModule('Configurações')"><strong>⚙️</strong><span>Configurações</span><small>Dados do estabelecimento</small></button>
+    </section>
+
+    <section id="module" class="module hidden">
+      <h2 id="moduleTitle"></h2>
+      <p>Este módulo será desenvolvido na próxima etapa.</p>
+      <button onclick="closeModule()">Voltar ao painel</button>
+    </section>
+  </main>
+
+  <footer>LMC Combustíveis • Versão 1.0 • Estrutura inicial</footer>
+  <script src="app.js"></script>
+</body>
+</html>
